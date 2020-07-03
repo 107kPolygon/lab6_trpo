@@ -25,7 +25,7 @@ namespace lab6_trpo
             {
                 try
                 {
-                    var elementToBeDisplayed = webDriver.FindElement(By.XPath("//*[@id=\"tsf\"]/div[2]/div[1]/div[1]/div/div[2]/input"));
+                    var elementToBeDisplayed = webDriver.FindElement(By.XPath("//*[@id=\"burger\"]/span[3]"));
                     return elementToBeDisplayed.Displayed;
                 }
                 //в случае, если такого элемента нет
@@ -39,7 +39,7 @@ namespace lab6_trpo
                 }
             });
             Assert.AreEqual("Сибирский государственный университет телекоммуникаций и информатики", webDriver.Title);
-            webDriver.Close();
+            //webDriver.Close();
         }
         [TestCase]
         public void DisplayEl()//2. Проверка видимости объектов
@@ -66,7 +66,7 @@ namespace lab6_trpo
             IWebElement el1 = webDriver.FindElement(By.XPath("/html/body/div[3]/header/div/a"));
             bool status = el1.Displayed; //проверяет, отображается ли элемент на веб странице
             Assert.True(status);
-            webDriver.Close();
+            //webDriver.Close();
         }
 
         [TestCase]
@@ -99,7 +99,7 @@ namespace lab6_trpo
             element1.SendKeys(Keys.Return);//чтобы запрос принялся
             Assert.AreEqual("https://sibsutis.ru/search/?q=%D1%81%D0%B5%D1%81%D1%81%D0%B8%D1%8F", webDriver.Url);
             //Assert.IsTrue(webDriver.PageSource.Contains("Доступно расписание лабораторно - экзаменационной сессии"));
-            webDriver.Close();
+            //webDriver.Close();
         }
 
         [TestCase]
@@ -112,16 +112,31 @@ namespace lab6_trpo
             IWebElement button = webDriver.FindElement(By.XPath("/html/body/center/div[2]/div[2]/div[2]/div[2]/div[3]/form/input[2]"));//ссылка на кнопку найти
             button.Click();
             Assert.IsTrue(webDriver.PageSource.Contains("К сожалению, на ваш поисковый запрос ничего не найдено."));//есть ли такое содержимое на сайте
-            webDriver.Close();
+           // webDriver.Close();
         }
 
         [TestCase]//эмуляция нажатия на кнопку
         public void Button()
         {
             webDriver.Url = "https://sibsutis.ru/";
-
+            var wait = new WebDriverWait(webDriver, new TimeSpan(0, 0, 30));
+            var element = wait.Until(condition =>
+            {
+                try
+                {
+                    var button0 = webDriver.FindElement(By.XPath("//*[@id=\"layout\"]/header/nav[1]/a[2]"));
+                    return button0.Displayed;    
+                }
+                catch (StaleElementReferenceException)
+                {
+                    return false;
+                }
+                catch (NoSuchElementException)
+                {
+                    return false;
+                }
+            });
             IWebElement button = webDriver.FindElement(By.XPath("//*[@id=\"layout\"]/header/nav[1]/a[2]"));
-            bool status = button.Displayed;
             button.Click();
             Assert.IsTrue(webDriver.Url == "https://sibsutis.ru/students/");
         }
